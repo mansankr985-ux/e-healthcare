@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Online Healthcare Management System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Basic Styling -->
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            background: #f3f4f6;
+        }
+
+        header {
+            background: #1f2937;
+            color: #fff;
+            padding: 15px 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .container {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .role-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-outline {
+            background: white;
+            border: 1px solid #9ca3af;
+            color: #111827;
+        }
+
+        .btn-danger {
+            background: #dc2626;
+            color: white;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .card {
+            background: white;
+            padding: 16px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .card h2 {
+            margin-top: 0;
+            font-size: 18px;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 8px;
+            margin-bottom: 10px;
+        }
+
+        form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 10px 15px;
+            margin-bottom: 10px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            margin-bottom: 3px;
+            color: #374151;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 6px 8px;
+            border-radius: 4px;
+            border: 1px solid #d1d5db;
+            font-size: 13px;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        th, td {
+            padding: 6px 8px;
+            border: 1px solid #e5e7eb;
+            text-align: left;
+        }
+
+        th {
+            background: #f9fafb;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .message {
+            margin-bottom: 10px;
+            font-size: 13px;
+        }
+
+        .message.success {
+            color: #065f46;
+        }
+
+        .message.error {
+            color: #b91c1c;
+        }
+
+        .section-title {
+            font-weight: bold;
+            margin: 10px 0 5px;
+            font-size: 14px;
+        }
+
+        .small-note {
+            font-size: 12px;
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Online Healthcare Management System</h1>
+</header>
+
+<div class="container">
+
+    <!-- Role Selector -->
+    <div class="card">
+        <h2>Select Role / Login (Demo)</h2>
+        <p class="small-note">
+            This is a simple demo. Choose a role to view its dashboard. No real password / login backend.
+        </p>
+        <div class="role-selector">
+            <button class="btn btn-primary" onclick="showPanel('adminPanel')">Admin Dashboard</button>
+            <button class="btn btn-outline" onclick="showPanel('doctorPanel')">Doctor Dashboard</button>
+            <button class="btn btn-outline" onclick="showPanel('patientPanel')">Patient Dashboard</button>
+        </div>
+    </div>
+
+    <!-- Admin Panel -->
+    <div id="adminPanel" class="card hidden">
+        <h2>Admin Dashboard</h2>
+        <div id="adminMessage" class="message"></div>
+
+        <!-- User Management -->
+        <div class="section-title">1. User Management</div>
+        <form id="userForm">
+            <div>
+                <label for="userName">Name</label>
+                <input id="userName" required>
+            </div>
+            <div>
+                <label for="userEmail">Email</label>
+                <input id="userEmail" type="email" required>
+            </div>
+            <div>
+                <label for="userRole">Role</label>
+                <select id="userRole" required>
+                    <option value="Admin">Admin</option>
+                    <option value="Doctor">Doctor</option>
+                    <option value="Patient">Patient</option>
+                </select>
+            </div>
+            <div>
+                <label for="userSpecialization">Specialization (for Doctors)</label>
+                <input id="userSpecialization" placeholder="e.g. Cardiologist">
+            </div>
+            <div>
+                <label>&nbsp;</label>
+                <button type="submit" class="btn btn-primary">Add User</button>
+            </div>
+        </form>
+
+        <table id="userTable">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Specialization</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Filled by JS -->
+            </tbody>
+        </table>
+
+        <!-- Appointment Management -->
+        <div class="section-title" style="margin-top: 20px;">2. Appointment Management (View All)</div>
+        <table id="adminAppointmentTable">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Patient</th>
+                <th>Patient Email</th>
+                <th>Doctor</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Reason</th>
+                <th>Status</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Filled by JS -->
+            </tbody>
+        </table>
+
+        <!-- System Settings -->
+        <div class="section-title" style="margin-top: 20px;">3. System Settings</div>
+        <form id="settingsForm">
+            <div>
+                <label for="settingKey">Setting Key</label>
+                <input id="settingKey" placeholder="e.g. clinic_hours" required>
+            </div>
+            <div>
+                <label for="settingValue">Setting Value</label>
+                <input id="settingValue" placeholder="e.g. 9 AM - 6 PM" required>
+            </div>
+            <div>
+                <label>&nbsp;</label>
+                <button type="submit" class="btn btn-primary">Save Setting</button>
+            </div>
+        </form>
+        <table id="settingsTable">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Key</th>
+                <th>Value</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Filled by JS -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Doctor Panel -->
+    <div id="doctorPanel" class="card hidden">
+        <h2>Doctor Dashboard</h2>
+        <div id="doctorMessage" class="message"></div>
+
+        <!-- Simple doctor identity -->
+        <div class="section-title">Doctor Identity (for Demo)</div>
+        <form id="doctorIdentityForm">
+            <div>
+                <label for="doctorName">Doctor Name</label>
+                <input id="doctorName" placeholder="Name must match appointment doctor name" required>
+            </div>
+            <div>
+                <label>&nbsp;</label>
+                <button type="submit" class="btn btn-primary">Load My Data</button>
+            </div>
+        </form>
+
+        <!-- Schedule Management -->
+        <div class="section-title">1. Schedule Management</div>
+        <form id="scheduleForm">
+            <div>
+                <label for="scheduleDay">Day</label>
+                <input id="scheduleDay" placeholder="e.g. Monday" required>
+            </div>
+            <div>
+                <label for="scheduleStart">Start Time</label>
+                <input id="scheduleStart" placeholder="e.g. 10:00 AM" required>
+            </div>
+            <div>
+                <label for="scheduleEnd">End Time</label>
+                <input id="scheduleEnd" placeholder="e.g. 2:00 PM" required>
+            </div>
+            <div>
+                <label>&nbsp;</label>
+                <button type="submit" class="btn btn-primary">Add Availability</button>
+            </div>
+        </form>
+
+        <table id="scheduleTable">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Doctor</th>
+                <th>Day</th>
+                <th>Start</th>
+                <th>End</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Filled by JS -->
+            </tbody>
+        </table>
+
+        <!-- Appointment Handling -->
+        <div class="section-title" style="margin-top: 20px;">2. My Appointments</div>
+        <table id="doctorAppointmentTable">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Patient</th>
+                <th>Email</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Reason</th>
+                <th>Status</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Filled by JS -->
+            </tbody>
+        </table>
+
+        <!-- Patient Record Management -->
+        <div class="section-title" style="margin-top: 20px;">3. Patient Record Management</div>
+        <form id="recordForm">
+            <div>
+                <label for="recordPatientEmail">Patient Email</label>
+                <input id="recordPatientEmail" type="email" required>
+            </div>
+            <div>
+                <label for="recordDiagnosis">Diagnosis</label>
+                <input id="recordDiagnosis" required>
+            </div>
+            <div>
+                <label for="recordPrescription">Prescription</label>
+                <textarea id="recordPrescription" required></textarea>
+            </div>
+            <div>
+                <label for="recordNotes">Notes</label>
+                <textarea id="recordNotes"></textarea>
+            </div>
+            <div>
+                <label for="recordDate">Visit Date</label>
+                <input id="recordDate" type="date" required>
+            </div>
+            <div>
+                <label>&nbsp;</label>
+                <button type="submit" class="btn btn-primary">Save Record</button>
+            </div>
+        </form>
+
+        <table id="recordTable">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Patient Email</th>
+                <th>Doctor</th>
+                <th>Diagnosis</th>
+                <th>Prescription</th>
+                <th>Notes</th>
+                <th>Visit Date</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Filled by JS -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Patient Panel -->
+    <div id="patientPanel" class="card hidden">
+        <h2>Patient Dashboard</h2>
+        <div id="patientMessage" class="message"></div>
+
+        <!-- Patient Identity -->
+        <div class="section-title">Patient Identity</div>
+        <form id="patientIdentityForm">
+            <div>
+                <label for="patientName">Patient Name</label>
+                <input id="patientName" required>
+            </div>
+            <div>
+                <label for="patientEmail">Patient Email</label>
+                <input id="patientEmail" type="email" required>
+            </div>
+            <div>
+                <label>&nbsp;</label>
+                <button type="submit" class="btn btn-primary">Set My Identity</button>
+            </div>
+        </form>
+
+        <!-- Appointment Booking -->
+        <div class="section-title">1. Book Appointment</div>
+        <form id="appointmentForm">
+            <div>
+                <label for="appointmentDoctor">Doctor Name</label>
+                <input id="appointmentDoctor" placeholder="Must match doctor's name" required>
+            </div>
+            <div>
+                <label for="appointmentDate">Date</label>
+                <input id="appointmentDate" type="date" required>
+            </div>
+            <div>
+                <label for="appointmentTime">Time</label>
+                <input id="appointmentTime" placeholder="e.g. 11:30 AM" required>
+            </div>
+            <div>
+                <label for="appointmentReason">Reason</label>
+                <input id="appointmentReason" placeholder="e.g. Fever, Checkup" required>
+            </div>
+            <div>
+                <label>&nbsp;</label>
+                <button type="submit" class="btn btn-primary">Book Appointment</button>
+            </div>
+        </form>
+
+        <!-- Manage Appointments -->
+        <div class="section-title" style="margin-top: 20px;">2. My Appointments</div>
+        <table id="patientAppointmentTable">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Doctor</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Reason</th>
+                <th>Status</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Filled by JS -->
+            </tbody>
+        </table>
+
+        <!-- Medical History -->
+        <div class="section-title" style="margin-top: 20px;">3. My Medical History</div>
+        <table id="patientHistoryTable">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Doctor</th>
+                <th>Diagnosis</th>
+                <th>Prescription</th>
+                <th>Notes</th>
+                <th>Visit Date</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Filled by JS -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- JavaScript Logic -->
+<script>
+    // ===== Data Storage (In-Memory) =====
+    let users = [];           // {id, name, email, role, specialization}
+    let appointments = [];    // {id, patientName, patientEmail, doctorName, date, time, reason, status}
+    let schedules = [];       // {id, doctorName, day, start, end}
+    let records = [];         // {id, patientEmail, doctorName, diagnosis, prescription, notes, visitDate}
+    let settings = [];        // {id, key, value}
+
+    let currentDoctorName = "";
+    let currentPatientName = "";
+    let currentPatientEmail = "";
+
+    // ===== Utility Functions =====
+    function showPanel(panelId) {
+        document.getElementById("adminPanel").classList.add("hidden");
+        document.getElementById("doctorPanel").classList.add("hidden");
+        document.getElementById("patientPanel").classList.add("hidden");
+
+        document.getElementById(panelId).classList.remove("hidden");
+    }
+
+    function showMessage(id, text, type = "success") {
+        const el = document.getElementById(id);
+        el.textContent = text;
+        el.className = "message " + type;
+        if (!text) return;
+        setTimeout(() => {
+            el.textContent = "";
+        }, 3000);
+    }
+
+    // ===== Admin: User Management =====
+    const userForm = document.getElementById("userForm");
+    const userTableBody = document.querySelector("#userTable tbody");
+
+    userForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+        const name = document.getElementById("userName").value.trim();
+        const email = document.getElementById("userEmail").value.trim();
+        const role = document.getElementById("userRole").value;
+        const specialization = document.getElementById("userSpecialization").value.trim();
+
+        const id = users.length + 1;
+        users.push({ id, name, email, role, specialization });
+
+        renderUsers();
+        userForm.reset();
+        showMessage("adminMessage", "User created successfully!", "success");
+    });
+
+    function renderUsers() {
+        userTableBody.innerHTML = "";
+        users.forEach((u, index) => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td>${index + 1}</td>
+                <td>${u.name}</td>
+                <td>${u.email}</td>
+                <td>${u.role}</td>
+                <td>${u.specialization || "-"}</td>
+                <td><button class="btn btn-danger" onclick="deleteUser(${u.id})">Delete</button></td>
+            `;
+            userTableBody.appendChild(tr);
+        });
+    }
+
+    function deleteUser(id) {
+        users = users.filter(u => u.id !== id);
+        renderUsers();
+        showMessage("adminMessage", "User deleted successfully!", "success");
+    }
+
+    // make deleteUser available globally
+    window.deleteUser = deleteUser;
+
+    // ===== Admin: Appointment Management View =====
+    const adminAppointmentTableBody = document.querySelector("#adminAppointmentTable tbody");
+
+    function renderAppointmentsForAdmin() {
+        adminAppointmentTableBody.innerHTML = "";
+        appointments.forEach(a => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td>${a.id}</td>
+                <td>${a.patientName}</td>
+                <td>${a.patientEmail}</td>
+                <td>${a.doctorName}</td>
+                <td>${a.date}</td>
+                <td>${a.time}</td>
+                <td>${a.reason}</td>
+                <td>${a.status}</td>
+            `;
+            adminAppointmentTableBody.appendChild(tr);
+        });
+    }
+
+    // ===== Admin: System Settings =====
+    const settingsForm = document.getElementById("settingsForm");
+    const settingsTableBody = document.querySelector("#settingsTable tbody");
+
+    settingsForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+        const key = document.getElementById("settingKey").value.trim();
+        const value = document.getElementById("settingValue").value.trim();
+        const id = settings.length + 1;
+        settings.push({ id, key, value });
+        renderSettings();
+        settingsForm.reset();
+        showMessage("adminMessage", "Setting saved successfully!", "success");
+    });
+
+    function renderSettings() {
+        settingsTableBody.innerHTML = "";
+        settings.forEach(s => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td>${s.id}</td>
+                <td>${s.key}</td>
+                <td>${s.value}</td>
+            `;
+            settingsTableBody.appendChild(tr);
+        });
+    }
+
+    // ===== Doctor: Identity =====
+    const doctorIdentityForm = document.getElementById("doctorIdentityForm");
+    doctorIdentityForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+        currentDoctorName = document.getElementById("doctorName").value.trim();
+        showMessage("doctorMessage", "Doctor set to: " + currentDoctorName, "success");
+        renderDoctorAppointments();
+        renderSchedules();
+        renderRecords();
+    });
+
+    // ===== Doctor: Schedule Management =====
+    const scheduleForm = document.getElementById("scheduleForm");
+    const scheduleTableBody = document.querySelector("#scheduleTable tbody");
+
+    scheduleForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+        if (!currentDoctorName) {
+            showMessage("doctorMessage", "Please set doctor identity first.", "error");
+            return;
+        }
+        const day = document.getElementById("scheduleDay").value.trim();
+        const start = document.getElementById("scheduleStart").value.trim();
+        const end = document.getElementById("scheduleEnd").value.trim();
+        const id = schedules.length + 1;
+
+        schedules.push({ id, doctorName: currentDoctorName, day, start, end });
+        renderSchedules();
+        scheduleForm.reset();
+        showMessage("doctorMessage", "Availability added successfully!", "success");
+    });
+
+    function renderSchedules() {
+        scheduleTableBody.innerHTML = "";
+        schedules
+            .filter(s => !currentDoctorName || s.doctorName === currentDoctorName)
+            .forEach((s, index) => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${s.doctorName}</td>
+                    <td>${s.day}</td>
+                    <td>${s.start}</td>
+                    <td>${s.end}</td>
+                `;
+                scheduleTableBody.appendChild(tr);
+            });
+    }
+
+    // ===== Doctor: Appointment Handling =====
+    const doctorAppointmentTableBody = document.querySelector("#doctorAppointmentTable tbody");
+
+    function renderDoctorAppointments() {
+        if (!currentDoctorName) return;
+        doctorAppointmentTableBody.innerHTML = "";
+        appointments
+            .filter(a => a.doctorName.toLowerCase() === currentDoctorName.toLowerCase())
+            .forEach(a => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td>${a.id}</td>
+                    <td>${a.patientName}</td>
+                    <td>${a.patientEmail}</td>
+                    <td>${a.date}</td>
+                    <td>${a.time}</td>
+                    <td>${a.reason}</td>
+                    <td>${a.status}</td>
+                `;
+                doctorAppointmentTableBody.appendChild(tr);
+            });
+    }
+
+    // ===== Doctor: Patient Record Management =====
+    const recordForm = document.getElementById("recordForm");
+    const recordTableBody = document.querySelector("#recordTable tbody");
+
+    recordForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+        if (!currentDoctorName) {
+            showMessage("doctorMessage", "Please set doctor identity first.", "error");
+            return;
+        }
+        const patientEmail = document.getElementById("recordPatientEmail").value.trim();
+        const diagnosis = document.getElementById("recordDiagnosis").value.trim();
+        const prescription = document.getElementById("recordPrescription").value.trim();
+        const notes = document.getElementById("recordNotes").value.trim();
+        const visitDate = document.getElementById("recordDate").value;
+
+        const id = records.length + 1;
+        records.push({
+            id,
+            patientEmail,
+            doctorName: currentDoctorName,
+            diagnosis,
+            prescription,
+            notes,
+            visitDate
+        });
+        recordForm.reset();
+        renderRecords();
+        renderPatientHistory(); // update if patient is logged
+        showMessage("doctorMessage", "Patient record saved successfully!", "success");
+    });
+
+    function renderRecords() {
+        recordTableBody.innerHTML = "";
+        records
+            .filter(r => !currentDoctorName || r.doctorName === currentDoctorName)
+            .forEach((r, index) => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${r.patientEmail}</td>
+                    <td>${r.doctorName}</td>
+                    <td>${r.diagnosis}</td>
+                    <td>${r.prescription}</td>
+                    <td>${r.notes || "-"}</td>
+                    <td>${r.visitDate}</td>
+                `;
+                recordTableBody.appendChild(tr);
+            });
+    }
+
+    // ===== Patient: Identity =====
+    const patientIdentityForm = document.getElementById("patientIdentityForm");
+
+    patientIdentityForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+        currentPatientName = document.getElementById("patientName").value.trim();
+        currentPatientEmail = document.getElementById("patientEmail").value.trim();
+        showMessage("patientMessage",
+            "Patient set to: " + currentPatientName + " (" + currentPatientEmail + ")", "success");
+        renderPatientAppointments();
+        renderPatientHistory();
+    });
+
+    // ===== Patient: Appointment Booking =====
+    const appointmentForm = document.getElementById("appointmentForm");
+    const patientAppointmentTableBody = document.querySelector("#patientAppointmentTable tbody");
+
+    appointmentForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+        if (!currentPatientName || !currentPatientEmail) {
+            showMessage("patientMessage", "Please set patient identity first.", "error");
+            return;
+        }
+        const doctorName = document.getElementById("appointmentDoctor").value.trim();
+        const date = document.getElementById("appointmentDate").value;
+        const time = document.getElementById("appointmentTime").value.trim();
+        const reason = document.getElementById("appointmentReason").value.trim();
+
+        const id = appointments.length + 1;
+        appointments.push({
+            id,
+            patientName: currentPatientName,
+            patientEmail: currentPatientEmail,
+            doctorName,
+            date,
+            time,
+            reason,
+            status: "Booked"
+        });
+
+        appointmentForm.reset();
+        renderAppointmentsForAdmin();
+        renderDoctorAppointments();
+        renderPatientAppointments();
+
+        showMessage("patientMessage", "Appointment booked successfully!", "success");
+    });
+
+    function renderPatientAppointments() {
+        if (!currentPatientEmail) return;
+        patientAppointmentTableBody.innerHTML = "";
+        appointments
+            .filter(a => a.patientEmail.toLowerCase() === currentPatientEmail.toLowerCase())
+            .forEach(a => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td>${a.id}</td>
+                    <td>${a.doctorName}</td>
+                    <td>${a.date}</td>
+                    <td>${a.time}</td>
+                    <td>${a.reason}</td>
+                    <td>${a.status}</td>
+                `;
+                patientAppointmentTableBody.appendChild(tr);
+            });
+    }
+
+    // ===== Patient: Medical History =====
+    const patientHistoryTableBody = document.querySelector("#patientHistoryTable tbody");
+
+    function renderPatientHistory() {
+        if (!currentPatientEmail) return;
+        patientHistoryTableBody.innerHTML = "";
+        records
+            .filter(r => r.patientEmail.toLowerCase() === currentPatientEmail.toLowerCase())
+            .forEach((r, index) => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${r.doctorName}</td>
+                    <td>${r.diagnosis}</td>
+                    <td>${r.prescription}</td>
+                    <td>${r.notes || "-"}</td>
+                    <td>${r.visitDate}</td>
+                `;
+                patientHistoryTableBody.appendChild(tr);
+            });
+    }
+
+    // Show Admin by default
+    showPanel('adminPanel');
+</script>
+
+</body>
+</html>

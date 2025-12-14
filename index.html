@@ -1,0 +1,2114 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Online Healthcare Management System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <style>
+      :root {
+        --bg-body: #0f172a;
+        --bg-main: #020617;
+        --bg-card: #0b1220;
+        --bg-card-soft: #020617;
+        --accent: #22c55e;
+        --accent-soft: rgba(34, 197, 94, 0.12);
+        --accent-strong: #16a34a;
+        --danger: #ef4444;
+        --danger-soft: rgba(239, 68, 68, 0.12);
+        --border-subtle: #1e293b;
+        --text-main: #e5e7eb;
+        --text-soft: #9ca3af;
+        --text-muted: #6b7280;
+        --radius-lg: 16px;
+        --radius-md: 10px;
+        --radius-sm: 6px;
+        --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.8);
+        --transition-fast: 0.15s ease-out;
+      }
+
+      * {
+        box-sizing: border-box;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          sans-serif;
+      }
+
+      body {
+        margin: 0;
+        background: radial-gradient(circle at top, #1e293b 0, #020617 55%);
+        color: var(--text-main);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* ===== Top Navbar ===== */
+      .navbar {
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 22px;
+        background: rgba(15, 23, 42, 0.9);
+        border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+        backdrop-filter: blur(18px);
+        position: sticky;
+        top: 0;
+        z-index: 20;
+      }
+
+      .navbar-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .logo-circle {
+        width: 34px;
+        height: 34px;
+        border-radius: 999px;
+        background: conic-gradient(
+          from 180deg,
+          #22c55e,
+          #0ea5e9,
+          #a855f7,
+          #22c55e
+        );
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1px;
+      }
+
+      .logo-inner {
+        width: 100%;
+        height: 100%;
+        border-radius: inherit;
+        background: #020617;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #bbf7d0;
+        font-size: 16px;
+        font-weight: 700;
+      }
+
+      .navbar-title {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .navbar-title-main {
+        font-size: 16px;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+      }
+
+      .navbar-title-sub {
+        font-size: 12px;
+        color: var(--text-soft);
+      }
+
+      .navbar-right {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .role-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: rgba(15, 23, 42, 0.85);
+        border-radius: 999px;
+        padding: 5px 10px 5px 6px;
+        border: 1px solid rgba(148, 163, 184, 0.55);
+      }
+
+      .role-dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 999px;
+        background: var(--accent);
+        box-shadow: 0 0 0 6px rgba(34, 197, 94, 0.3);
+      }
+
+      .role-label {
+        font-size: 12px;
+        color: var(--text-soft);
+      }
+
+      select.role-select {
+        background: transparent;
+        border: none;
+        color: var(--text-main);
+        font-size: 13px;
+        font-weight: 500;
+        outline: none;
+        padding-right: 4px;
+        cursor: pointer;
+      }
+
+      select.role-select option {
+        background: #020617;
+        color: #e5e7eb;
+      }
+
+      .mini-avatar {
+        width: 30px;
+        height: 30px;
+        border-radius: 999px;
+        background: radial-gradient(circle at top left, #22c55e, #0ea5e9);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: 600;
+        color: #0f172a;
+        border: 1px solid rgba(15, 23, 42, 0.5);
+      }
+
+      /* ===== Layout ===== */
+      .layout {
+        flex: 1;
+        display: flex;
+        min-height: calc(100vh - 60px);
+      }
+
+      /* ===== Sidebar ===== */
+      .sidebar {
+        width: 245px;
+        padding: 18px 12px 18px 18px;
+        border-right: 1px solid rgba(30, 64, 175, 0.5);
+        background: radial-gradient(circle at top left, #020617 0, #020617 55%);
+        box-shadow: 14px 0 40px rgba(15, 23, 42, 0.8);
+      }
+
+      .sidebar-heading {
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        margin-bottom: 8px;
+      }
+
+      .sidebar-section {
+        margin-bottom: 18px;
+      }
+
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 7px 10px;
+        border-radius: 999px;
+        font-size: 13px;
+        color: var(--text-soft);
+        cursor: pointer;
+        border: 1px solid transparent;
+        transition: background var(--transition-fast),
+          transform var(--transition-fast), border-color var(--transition-fast),
+          color var(--transition-fast), box-shadow var(--transition-fast);
+        margin-bottom: 4px;
+      }
+
+      .nav-item:hover {
+        background: rgba(15, 23, 42, 0.9);
+        border-color: rgba(148, 163, 184, 0.35);
+        color: var(--text-main);
+        transform: translateX(1px);
+      }
+
+      .nav-item.active {
+        background: linear-gradient(120deg, var(--accent-soft), transparent);
+        border-color: rgba(34, 197, 94, 0.6);
+        color: #bbf7d0;
+        box-shadow: 0 0 24px rgba(34, 197, 94, 0.36);
+      }
+
+      .nav-icon {
+        width: 20px;
+        height: 20px;
+        border-radius: 999px;
+        background: radial-gradient(circle at top left, #22c55e, #0ea5e9);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        color: #020617;
+        flex-shrink: 0;
+      }
+
+      .sidebar-footer {
+        margin-top: 18px;
+        padding: 10px;
+        border-radius: var(--radius-lg);
+        background: radial-gradient(
+          circle at top,
+          rgba(34, 197, 94, 0.1),
+          #020617
+        );
+        border: 1px solid rgba(34, 197, 94, 0.2);
+        font-size: 12px;
+        color: var(--text-soft);
+      }
+
+      .sidebar-footer span {
+        display: block;
+        font-size: 12px;
+        color: #bbf7d0;
+        font-weight: 500;
+        margin-bottom: 2px;
+      }
+
+      /* ===== Main Content ===== */
+      .main {
+        flex: 1;
+        padding: 18px 22px 22px;
+        overflow-x: hidden;
+      }
+
+      .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-bottom: 14px;
+        gap: 12px;
+      }
+
+      .page-title {
+        font-size: 20px;
+        font-weight: 600;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .page-title span {
+        font-size: 13px;
+        color: var(--text-soft);
+        font-weight: 400;
+      }
+
+      .page-header-right {
+        display: flex;
+        gap: 10px;
+      }
+
+      .btn {
+        border-radius: 999px;
+        border: none;
+        font-size: 13px;
+        padding: 7px 15px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: transform var(--transition-fast),
+          box-shadow var(--transition-fast), background var(--transition-fast),
+          border-color var(--transition-fast), color var(--transition-fast);
+        white-space: nowrap;
+      }
+
+      .btn:not(:disabled):hover {
+        transform: translateY(-1px);
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.65);
+      }
+
+      .btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+        color: #022c22;
+        font-weight: 600;
+        box-shadow: 0 14px 30px rgba(34, 197, 94, 0.35);
+        border: 1px solid rgba(34, 197, 94, 0.6);
+      }
+
+      .btn-ghost {
+        background: rgba(15, 23, 42, 0.7);
+        border: 1px solid rgba(148, 163, 184, 0.4);
+        color: var(--text-main);
+      }
+
+      .btn-danger {
+        background: var(--danger);
+        color: #fee2e2;
+        border: 1px solid rgba(248, 113, 113, 0.8);
+      }
+
+      /* ===== Cards & Layout ===== */
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(12, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .card {
+        background: radial-gradient(circle at top left, #020617 0, #020617 55%);
+        border-radius: var(--radius-lg);
+        border: 1px solid rgba(31, 41, 55, 0.9);
+        padding: 14px 14px 12px;
+        box-shadow: var(--shadow-soft);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(
+          circle at top left,
+          rgba(34, 197, 94, 0.18),
+          transparent 55%
+        );
+        opacity: 0.55;
+        pointer-events: none;
+      }
+
+      .card-inner {
+        position: relative;
+        z-index: 1;
+      }
+
+      .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 10px;
+      }
+
+      .card-title {
+        font-size: 14px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .card-tag {
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        padding: 3px 8px;
+        border-radius: 999px;
+        background: rgba(15, 23, 42, 0.9);
+        border: 1px solid rgba(148, 163, 184, 0.4);
+        color: var(--text-soft);
+      }
+
+      .card-body {
+        font-size: 13px;
+        color: var(--text-soft);
+      }
+
+      /* ===== Stats ===== */
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+
+      .stat-card {
+        background: radial-gradient(circle at top, #020617, #020617 70%);
+        border-radius: var(--radius-md);
+        border: 1px solid rgba(31, 41, 55, 0.9);
+        padding: 10px 11px 9px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .stat-card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(
+          circle at top left,
+          rgba(34, 197, 94, 0.16),
+          transparent 65%
+        );
+        opacity: 0.8;
+        pointer-events: none;
+      }
+
+      .stat-card h3 {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.11em;
+        color: var(--text-muted);
+        margin: 0;
+      }
+
+      .stat-value {
+        font-size: 18px;
+        font-weight: 600;
+        color: #e5e7eb;
+      }
+
+      .stat-sub {
+        font-size: 11px;
+        color: var(--text-soft);
+      }
+
+      .stat-trend {
+        font-size: 11px;
+        color: #bbf7d0;
+      }
+
+      /* ===== Forms & Inputs ===== */
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 8px 10px;
+        margin-bottom: 8px;
+      }
+
+      label {
+        display: block;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.11em;
+        color: var(--text-muted);
+        margin-bottom: 3px;
+      }
+
+      input,
+      select,
+      textarea {
+        width: 100%;
+        border-radius: var(--radius-sm);
+        border: 1px solid rgba(51, 65, 85, 0.9);
+        background: rgba(15, 23, 42, 0.9);
+        padding: 6px 9px;
+        font-size: 13px;
+        color: var(--text-main);
+        outline: none;
+        transition: border-color var(--transition-fast),
+          box-shadow var(--transition-fast), background var(--transition-fast);
+      }
+
+      input:focus,
+      select:focus,
+      textarea:focus {
+        border-color: rgba(34, 197, 94, 0.9);
+        box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.45);
+        background: #020617;
+      }
+
+      textarea {
+        resize: vertical;
+        min-height: 60px;
+      }
+
+      .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 2px;
+        gap: 8px;
+      }
+
+      /* ===== Table ===== */
+      .table-wrapper {
+        border-radius: var(--radius-md);
+        border: 1px solid rgba(31, 41, 55, 0.9);
+        overflow: hidden;
+        background: rgba(15, 23, 42, 0.9);
+        max-height: 260px;
+        overflow-y: auto;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12px;
+      }
+
+      thead {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+      }
+
+      th,
+      td {
+        padding: 7px 9px;
+        border-bottom: 1px solid rgba(30, 64, 175, 0.5);
+        text-align: left;
+        white-space: nowrap;
+      }
+
+      th {
+        background: linear-gradient(
+          120deg,
+          rgba(15, 23, 42, 0.96),
+          rgba(15, 23, 42, 0.86)
+        );
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--text-muted);
+      }
+
+      tr:nth-child(even) td {
+        background: rgba(15, 23, 42, 0.85);
+      }
+
+      tr:nth-child(odd) td {
+        background: rgba(15, 23, 42, 0.95);
+      }
+
+      .badge {
+        padding: 3px 8px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 500;
+        display: inline-block;
+      }
+
+      .badge-success {
+        background: var(--accent-soft);
+        color: #bbf7d0;
+        border: 1px solid rgba(34, 197, 94, 0.8);
+      }
+
+      .badge-pending {
+        background: rgba(234, 179, 8, 0.12);
+        color: #facc15;
+        border: 1px solid rgba(250, 204, 21, 0.7);
+      }
+
+      .badge-danger {
+        background: var(--danger-soft);
+        color: #fecaca;
+        border: 1px solid rgba(248, 113, 113, 0.8);
+      }
+
+      .badge-role {
+        background: rgba(37, 99, 235, 0.12);
+        color: #bfdbfe;
+        border: 1px solid rgba(59, 130, 246, 0.7);
+      }
+
+      /* Messages */
+      .message {
+        font-size: 12px;
+        margin-bottom: 6px;
+      }
+
+      .message.success {
+        color: #bbf7d0;
+      }
+
+      .message.error {
+        color: #fecaca;
+      }
+
+      /* Filters */
+      .filters {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        margin-bottom: 6px;
+        font-size: 12px;
+        color: var(--text-soft);
+      }
+
+      .filters input {
+        max-width: 200px;
+      }
+
+      .filters select {
+        max-width: 150px;
+      }
+
+      /* Responsive */
+      @media (max-width: 980px) {
+        .sidebar {
+          display: none;
+        }
+
+        .layout {
+          flex-direction: column;
+        }
+
+        .main {
+          padding: 14px;
+        }
+
+        .stats-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .form-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 640px) {
+        .page-header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .stats-grid {
+          grid-template-columns: repeat(1, minmax(0, 1fr));
+        }
+
+        .form-grid {
+          grid-template-columns: repeat(1, minmax(0, 1fr));
+        }
+
+        .table-wrapper {
+          max-height: 210px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- NAVBAR -->
+    <div class="navbar">
+      <div class="navbar-left">
+        <div class="logo-circle">
+          <div class="logo-inner">H</div>
+        </div>
+        <div class="navbar-title">
+          <div class="navbar-title-main">Healthcare OPS Console</div>
+          <div class="navbar-title-sub">Online Healthcare Management System</div>
+        </div>
+      </div>
+
+      <div class="navbar-right">
+        <div class="role-pill">
+          <div class="role-dot"></div>
+          <div>
+            <div class="role-label">Active Role</div>
+            <select id="roleSelect" class="role-select">
+              <option value="admin">Admin</option>
+              <option value="doctor">Doctor</option>
+              <option value="patient">Patient</option>
+            </select>
+          </div>
+        </div>
+        <div class="mini-avatar" id="roleAvatar">AD</div>
+      </div>
+    </div>
+
+    <!-- LAYOUT -->
+    <div class="layout">
+      <!-- SIDEBAR -->
+      <aside class="sidebar">
+        <div class="sidebar-section">
+          <div class="sidebar-heading">Admin</div>
+          <div class="nav-item active" data-section="admin-users">
+            <div class="nav-icon">U</div>
+            User Management
+          </div>
+          <div class="nav-item" data-section="admin-appointments">
+            <div class="nav-icon">A</div>
+            Appointment Overview
+          </div>
+          <div class="nav-item" data-section="admin-settings">
+            <div class="nav-icon">S</div>
+            System Settings
+          </div>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-heading">Doctor</div>
+          <div class="nav-item" data-section="doctor-schedule">
+            <div class="nav-icon">SC</div>
+            Schedule &amp; Availability
+          </div>
+          <div class="nav-item" data-section="doctor-appointments">
+            <div class="nav-icon">DA</div>
+            My Appointments
+          </div>
+          <div class="nav-item" data-section="doctor-records">
+            <div class="nav-icon">PR</div>
+            Patient Records
+          </div>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-heading">Patient</div>
+          <div class="nav-item" data-section="patient-booking">
+            <div class="nav-icon">BK</div>
+            Book Appointment
+          </div>
+          <div class="nav-item" data-section="patient-appointments">
+            <div class="nav-icon">PA</div>
+            My Appointments
+          </div>
+          <div class="nav-item" data-section="patient-history">
+            <div class="nav-icon">MH</div>
+            Medical History
+          </div>
+        </div>
+
+        <div class="sidebar-footer">
+          <span>Demo Mode</span>
+          Local in-memory data only. No backend, no login. Good for
+          <strong>project demo / viva / exam</strong>.
+        </div>
+      </aside>
+
+      <!-- MAIN CONTENT -->
+      <main class="main">
+        <!-- PAGE HEADER -->
+        <div class="page-header">
+          <div class="page-title">
+            <div id="pageTitle">Admin · User Management</div>
+            <span id="pageSubtitle">
+              Create and manage users, roles, and doctors.
+            </span>
+          </div>
+
+          <div class="page-header-right">
+            <button class="btn btn-ghost" id="quickSwitchBtn">
+              Switch Section
+            </button>
+            <button class="btn btn-primary" id="quickActionBtn">
+              Quick Action
+            </button>
+          </div>
+        </div>
+
+        <!-- STATS -->
+        <div class="stats-grid" id="statsGrid">
+          <div class="stat-card">
+            <h3>Total Users</h3>
+            <div class="stat-value" id="statUsers">0</div>
+            <div class="stat-sub">Admins, Doctors &amp; Patients</div>
+          </div>
+
+          <div class="stat-card">
+            <h3>Total Appointments</h3>
+            <div class="stat-value" id="statAppointments">0</div>
+            <div class="stat-sub">All statuses combined</div>
+          </div>
+
+          <div class="stat-card">
+            <h3>Today’s Bookings</h3>
+            <div class="stat-value" id="statToday">0</div>
+            <div class="stat-sub">Appointments on current date</div>
+          </div>
+
+          <div class="stat-card">
+            <h3>Active Doctors</h3>
+            <div class="stat-value" id="statDoctors">0</div>
+            <div class="stat-sub">Users with doctor role</div>
+          </div>
+        </div>
+
+        <!-- PANELS WRAPPER -->
+        <div id="panelsWrapper">
+          <!-- ADMIN: User Management -->
+          <section id="admin-users" class="card">
+            <div class="card-inner">
+              <div class="card-header">
+                <div class="card-title">
+                  User Management
+                  <span class="card-tag">Admin</span>
+                </div>
+                <div class="message" id="adminUserMessage"></div>
+              </div>
+
+              <div class="card-body">
+                <form id="userForm">
+                  <div class="form-grid">
+                    <div>
+                      <label for="userName">Full Name</label>
+                      <input
+                        id="userName"
+                        required
+                        placeholder="e.g. Dr. Neha Sharma"
+                      />
+                    </div>
+                    <div>
+                      <label for="userEmail">Email</label>
+                      <input
+                        id="userEmail"
+                        required
+                        type="email"
+                        placeholder="e.g. neha.sharma@clinic.com"
+                      />
+                    </div>
+                    <div>
+                      <label for="userRole">Role</label>
+                      <select id="userRole" required>
+                        <option value="Admin">Admin</option>
+                        <option value="Doctor">Doctor</option>
+                        <option value="Patient">Patient</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label for="userSpecialization">Specialization</label>
+                      <input
+                        id="userSpecialization"
+                        placeholder="For doctors only, e.g. Cardiologist"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                      + Add User
+                    </button>
+                  </div>
+                </form>
+
+                <div class="filters">
+                  <span>Filter:</span>
+                  <input
+                    id="userSearch"
+                    placeholder="Search name or email..."
+                  />
+                  <select id="userRoleFilter">
+                    <option value="">All Roles</option>
+                    <option value="Admin">Admin</option>
+                    <option value="Doctor">Doctor</option>
+                    <option value="Patient">Patient</option>
+                  </select>
+                </div>
+
+                <div class="table-wrapper">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Specialization</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody id="userTableBody"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ADMIN: Appointments -->
+          <section
+            id="admin-appointments"
+            class="card"
+            style="display: none"
+          >
+            <div class="card-inner">
+              <div class="card-header">
+                <div class="card-title">
+                  Appointment Overview
+                  <span class="card-tag">Admin</span>
+                </div>
+                <div class="message" id="adminAppointmentMessage"></div>
+              </div>
+
+              <div class="card-body">
+                <div class="filters">
+                  <span>Filter:</span>
+                  <input
+                    id="appointmentSearch"
+                    placeholder="Patient / Doctor..."
+                  />
+                  <select id="appointmentStatusFilter">
+                    <option value="">All Status</option>
+                    <option value="Booked">Booked</option>
+                    <option value="Completed">Completed</option>
+                    <option value="Cancelled">Cancelled</option>
+                  </select>
+                </div>
+
+                <div class="table-wrapper">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>Patient</th>
+                        <th>Doctor</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Reason</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody id="adminAppointmentTableBody"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ADMIN: Settings -->
+          <section id="admin-settings" class="card" style="display: none">
+            <div class="card-inner">
+              <div class="card-header">
+                <div class="card-title">
+                  System Settings
+                  <span class="card-tag">Admin</span>
+                </div>
+                <div class="message" id="adminSettingsMessage"></div>
+              </div>
+
+              <div class="card-body">
+                <form id="settingsForm">
+                  <div class="form-grid">
+                    <div>
+                      <label for="settingKey">Key</label>
+                      <input
+                        id="settingKey"
+                        required
+                        placeholder="e.g. clinic_hours"
+                      />
+                    </div>
+                    <div>
+                      <label for="settingValue">Value</label>
+                      <input
+                        id="settingValue"
+                        required
+                        placeholder="e.g. 9AM - 6PM"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                      Save Setting
+                    </button>
+                  </div>
+                </form>
+
+                <div class="table-wrapper" style="margin-top: 8px">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Key</th>
+                        <th>Value</th>
+                      </tr>
+                    </thead>
+                    <tbody id="settingsTableBody"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- DOCTOR: Schedule -->
+          <section id="doctor-schedule" class="card" style="display: none">
+            <div class="card-inner">
+              <div class="card-header">
+                <div class="card-title">
+                  Schedule &amp; Availability
+                  <span class="card-tag">Doctor</span>
+                </div>
+                <div class="message" id="doctorScheduleMessage"></div>
+              </div>
+
+              <div class="card-body">
+                <form id="doctorIdentityForm">
+                  <div class="form-grid">
+                    <div>
+                      <label for="doctorName">Doctor Name</label>
+                      <input
+                        id="doctorName"
+                        required
+                        placeholder="e.g. Dr. Neha Sharma"
+                      />
+                    </div>
+                    <div>
+                      <label>&nbsp;</label>
+                      <button type="submit" class="btn btn-ghost">
+                        Set Active Doctor
+                      </button>
+                    </div>
+                  </div>
+                </form>
+
+                <form id="scheduleForm">
+                  <div class="form-grid">
+                    <div>
+                      <label for="scheduleDay">Day</label>
+                      <input
+                        id="scheduleDay"
+                        required
+                        placeholder="e.g. Monday"
+                      />
+                    </div>
+                    <div>
+                      <label for="scheduleStart">Start Time</label>
+                      <input
+                        id="scheduleStart"
+                        required
+                        placeholder="e.g. 10:00 AM"
+                      />
+                    </div>
+                    <div>
+                      <label for="scheduleEnd">End Time</label>
+                      <input
+                        id="scheduleEnd"
+                        required
+                        placeholder="e.g. 2:00 PM"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                      + Add Slot
+                    </button>
+                  </div>
+                </form>
+
+                <div class="table-wrapper" style="margin-top: 8px">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Doctor</th>
+                        <th>Day</th>
+                        <th>Start</th>
+                        <th>End</th>
+                      </tr>
+                    </thead>
+                    <tbody id="scheduleTableBody"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- DOCTOR: Appointments -->
+          <section
+            id="doctor-appointments"
+            class="card"
+            style="display: none"
+          >
+            <div class="card-inner">
+              <div class="card-header">
+                <div class="card-title">
+                  My Appointments
+                  <span class="card-tag">Doctor</span>
+                </div>
+                <div class="message" id="doctorAppointmentMessage"></div>
+              </div>
+
+              <div class="card-body">
+                <div class="table-wrapper">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>Patient</th>
+                        <th>Email</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Reason</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody id="doctorAppointmentTableBody"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- DOCTOR: Records -->
+          <section id="doctor-records" class="card" style="display: none">
+            <div class="card-inner">
+              <div class="card-header">
+                <div class="card-title">
+                  Patient Records
+                  <span class="card-tag">Doctor</span>
+                </div>
+                <div class="message" id="doctorRecordMessage"></div>
+              </div>
+
+              <div class="card-body">
+                <form id="recordForm">
+                  <div class="form-grid">
+                    <div>
+                      <label for="recordPatientEmail">Patient Email</label>
+                      <input
+                        id="recordPatientEmail"
+                        required
+                        type="email"
+                        placeholder="e.g. patient@mail.com"
+                      />
+                    </div>
+                    <div>
+                      <label for="recordDiagnosis">Diagnosis</label>
+                      <input
+                        id="recordDiagnosis"
+                        required
+                        placeholder="e.g. Viral Fever"
+                      />
+                    </div>
+                    <div>
+                      <label for="recordPrescription">Prescription</label>
+                      <textarea
+                        id="recordPrescription"
+                        required
+                        placeholder="e.g. Paracetamol 500mg, 3 times a day"
+                      ></textarea>
+                    </div>
+                    <div>
+                      <label for="recordNotes">Notes</label>
+                      <textarea
+                        id="recordNotes"
+                        placeholder="e.g. Monitor temperature, re-visit after 3 days"
+                      ></textarea>
+                    </div>
+                    <div>
+                      <label for="recordDate">Visit Date</label>
+                      <input id="recordDate" type="date" required />
+                    </div>
+                  </div>
+
+                  <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                      Save Record
+                    </button>
+                  </div>
+                </form>
+
+                <div class="table-wrapper" style="margin-top: 8px">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Patient Email</th>
+                        <th>Doctor</th>
+                        <th>Diagnosis</th>
+                        <th>Prescription</th>
+                        <th>Notes</th>
+                        <th>Visit Date</th>
+                      </tr>
+                    </thead>
+                    <tbody id="recordTableBody"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- PATIENT: Booking -->
+          <section id="patient-booking" class="card" style="display: none">
+            <div class="card-inner">
+              <div class="card-header">
+                <div class="card-title">
+                  Book Appointment
+                  <span class="card-tag">Patient</span>
+                </div>
+                <div class="message" id="patientBookingMessage"></div>
+              </div>
+
+              <div class="card-body">
+                <form id="patientIdentityForm">
+                  <div class="form-grid">
+                    <div>
+                      <label for="patientName">Patient Name</label>
+                      <input
+                        id="patientName"
+                        required
+                        placeholder="Your full name"
+                      />
+                    </div>
+                    <div>
+                      <label for="patientEmail">Patient Email</label>
+                      <input
+                        id="patientEmail"
+                        required
+                        type="email"
+                        placeholder="you@example.com"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="form-actions">
+                    <button type="submit" class="btn btn-ghost">
+                      Set Patient Identity
+                    </button>
+                  </div>
+                </form>
+
+                <form id="appointmentForm">
+                  <div class="form-grid">
+                    <div>
+                      <label for="appointmentDoctor">Doctor Name</label>
+                      <input
+                        id="appointmentDoctor"
+                        required
+                        placeholder="Exact doctor name"
+                      />
+                    </div>
+                    <div>
+                      <label for="appointmentDate">Date</label>
+                      <input id="appointmentDate" required type="date" />
+                    </div>
+                    <div>
+                      <label for="appointmentTime">Time</label>
+                      <input
+                        id="appointmentTime"
+                        required
+                        placeholder="e.g. 11:30 AM"
+                      />
+                    </div>
+                    <div>
+                      <label for="appointmentReason">Reason</label>
+                      <input
+                        id="appointmentReason"
+                        required
+                        placeholder="e.g. Fever, Checkup"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                      Book Appointment
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </section>
+
+          <!-- PATIENT: My Appointments -->
+          <section
+            id="patient-appointments"
+            class="card"
+            style="display: none"
+          >
+            <div class="card-inner">
+              <div class="card-header">
+                <div class="card-title">
+                  My Appointments
+                  <span class="card-tag">Patient</span>
+                </div>
+                <div class="message" id="patientAppointmentMessage"></div>
+              </div>
+
+              <div class="card-body">
+                <div class="table-wrapper">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>Doctor</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Reason</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody id="patientAppointmentTableBody"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- PATIENT: Medical History -->
+          <section id="patient-history" class="card" style="display: none">
+            <div class="card-inner">
+              <div class="card-header">
+                <div class="card-title">
+                  Medical History
+                  <span class="card-tag">Patient</span>
+                </div>
+                <div class="message" id="patientHistoryMessage"></div>
+              </div>
+
+              <div class="card-body">
+                <div class="table-wrapper">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Doctor</th>
+                        <th>Diagnosis</th>
+                        <th>Prescription</th>
+                        <th>Notes</th>
+                        <th>Visit Date</th>
+                      </tr>
+                    </thead>
+                    <tbody id="patientHistoryTableBody"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <!-- SCRIPT -->
+    <script>
+      // ========= IN-MEMORY STATE (No Backend) =========
+      const AppState = {
+        users: [],
+        appointments: [],
+        schedules: [],
+        records: [],
+        settings: [],
+        currentRole: "admin",
+        currentSection: "admin-users",
+        currentDoctorName: "",
+        currentPatientName: "",
+        currentPatientEmail: "",
+      };
+
+      // ========= UTILITY =========
+      function byId(id) {
+        return document.getElementById(id);
+      }
+
+      function showMessage(elId, text, type = "success") {
+        const el = byId(elId);
+        el.textContent = text;
+        el.className = "message " + type;
+        if (!text) return;
+        setTimeout(() => {
+          el.textContent = "";
+        }, 2800);
+      }
+
+      function formatStatusBadge(status) {
+        let cls = "badge badge-pending";
+        if (status === "Booked") cls = "badge badge-pending";
+        else if (status === "Completed") cls = "badge badge-success";
+        else if (status === "Cancelled") cls = "badge badge-danger";
+        return `<span class="${cls}">${status}</span>`;
+      }
+
+      function formatRoleBadge(role) {
+        return `<span class="badge badge-role">${role}</span>`;
+      }
+
+      function todayDateISO() {
+        const d = new Date();
+        return d.toISOString().split("T")[0];
+      }
+
+      // ========= STATS =========
+      function updateStats() {
+        byId("statUsers").textContent = AppState.users.length;
+        byId("statAppointments").textContent = AppState.appointments.length;
+
+        const today = todayDateISO();
+        const todayCount = AppState.appointments.filter(
+          (a) => a.date === today
+        ).length;
+        byId("statToday").textContent = todayCount;
+
+        const doctorCount = AppState.users.filter(
+          (u) => u.role === "Doctor"
+        ).length;
+        byId("statDoctors").textContent = doctorCount;
+      }
+
+      // ========= ROLE & SECTION HANDLING =========
+      const roleSelect = byId("roleSelect");
+      const roleAvatar = byId("roleAvatar");
+      const pageTitle = byId("pageTitle");
+      const pageSubtitle = byId("pageSubtitle");
+
+      const sectionMeta = {
+        "admin-users": {
+          title: "Admin · User Management",
+          subtitle: "Create and manage users, roles, and doctors.",
+          quickAction: "Add Demo Doctor",
+        },
+        "admin-appointments": {
+          title: "Admin · Appointment Overview",
+          subtitle: "View and monitor all appointments in the system.",
+          quickAction: "Mark Random Completed",
+        },
+        "admin-settings": {
+          title: "Admin · System Settings",
+          subtitle: "Configure core system behaviour and preferences.",
+          quickAction: "Add Demo Setting",
+        },
+        "doctor-schedule": {
+          title: "Doctor · Schedule & Availability",
+          subtitle: "Define when you are available for appointments.",
+          quickAction: "Demo Slot",
+        },
+        "doctor-appointments": {
+          title: "Doctor · My Appointments",
+          subtitle: "See all appointments assigned to the active doctor.",
+          quickAction: "Refresh List",
+        },
+        "doctor-records": {
+          title: "Doctor · Patient Records",
+          subtitle: "Maintain diagnosis, prescriptions and visit history.",
+          quickAction: "Demo Record",
+        },
+        "patient-booking": {
+          title: "Patient · Book Appointment",
+          subtitle: "Set identity and book a new appointment.",
+          quickAction: "Demo Booking",
+        },
+        "patient-appointments": {
+          title: "Patient · My Appointments",
+          subtitle: "See all your upcoming and past appointments.",
+          quickAction: "Refresh List",
+        },
+        "patient-history": {
+          title: "Patient · Medical History",
+          subtitle: "View your past diagnoses and prescriptions.",
+          quickAction: "Refresh History",
+        },
+      };
+
+      function updateHeaderForSection(section) {
+        const meta = sectionMeta[section];
+        if (!meta) return;
+        pageTitle.textContent = meta.title;
+        pageSubtitle.textContent = meta.subtitle;
+        byId("quickActionBtn").textContent = meta.quickAction;
+      }
+
+      function updateAvatarForRole(role) {
+        const map = {
+          admin: "AD",
+          doctor: "DR",
+          patient: "PT",
+        };
+        roleAvatar.textContent = map[role] || "HC";
+      }
+
+      roleSelect.addEventListener("change", () => {
+        AppState.currentRole = roleSelect.value;
+        updateAvatarForRole(AppState.currentRole);
+
+        // Auto jump to default section per role
+        if (AppState.currentRole === "admin") {
+          activateSection("admin-users");
+        } else if (AppState.currentRole === "doctor") {
+          activateSection("doctor-schedule");
+        } else {
+          activateSection("patient-booking");
+        }
+      });
+
+      const navItems = document.querySelectorAll(".nav-item");
+      navItems.forEach((item) => {
+        item.addEventListener("click", () => {
+          const section = item.getAttribute("data-section");
+          activateSection(section);
+        });
+      });
+
+      function activateSection(section) {
+        AppState.currentSection = section;
+
+        // Toggle cards
+        document
+          .querySelectorAll("#panelsWrapper > section")
+          .forEach((sec) => (sec.style.display = "none"));
+        const activePanel = byId(section);
+        if (activePanel) activePanel.style.display = "block";
+
+        // Sidebar active state
+        navItems.forEach((item) => {
+          item.classList.toggle(
+            "active",
+            item.getAttribute("data-section") === section
+          );
+        });
+
+        updateHeaderForSection(section);
+        renderAll();
+      }
+
+      // Quick Switch + Quick Action buttons
+      const quickSwitchBtn = byId("quickSwitchBtn");
+      const quickActionBtn = byId("quickActionBtn");
+
+      quickSwitchBtn.addEventListener("click", () => {
+        const allSections = Object.keys(sectionMeta).filter((key) =>
+          key.startsWith(AppState.currentRole)
+        );
+        const idx = allSections.indexOf(AppState.currentSection);
+        const nextSection = allSections[(idx + 1) % allSections.length];
+        activateSection(nextSection);
+      });
+
+      quickActionBtn.addEventListener("click", () => {
+        const sec = AppState.currentSection;
+
+        if (sec === "admin-users") {
+          AppState.users.push({
+            id: AppState.users.length + 1,
+            name: "Dr. Demo Doctor",
+            email: "demo.doctor@clinic.com",
+            role: "Doctor",
+            specialization: "General Physician",
+          });
+          showMessage("adminUserMessage", "Demo doctor added.", "success");
+          renderUsers();
+        } else if (sec === "admin-appointments") {
+          if (AppState.appointments.length === 0) {
+            showMessage(
+              "adminAppointmentMessage",
+              "No appointments to update.",
+              "error"
+            );
+            return;
+          }
+          const idx = Math.floor(Math.random() * AppState.appointments.length);
+          AppState.appointments[idx].status = "Completed";
+          showMessage(
+            "adminAppointmentMessage",
+            "Random appointment marked Completed.",
+            "success"
+          );
+          renderAppointmentsForAdmin();
+        } else if (sec === "admin-settings") {
+          AppState.settings.push({
+            id: AppState.settings.length + 1,
+            key: "demo_mode",
+            value: "enabled",
+          });
+          showMessage("adminSettingsMessage", "Demo setting added.", "success");
+          renderSettings();
+        } else if (sec === "doctor-schedule") {
+          if (!AppState.currentDoctorName) {
+            showMessage(
+              "doctorScheduleMessage",
+              "Set active doctor first.",
+              "error"
+            );
+            return;
+          }
+          AppState.schedules.push({
+            id: AppState.schedules.length + 1,
+            doctorName: AppState.currentDoctorName,
+            day: "Monday",
+            start: "10:00 AM",
+            end: "1:00 PM",
+          });
+          showMessage("doctorScheduleMessage", "Demo slot added.", "success");
+          renderSchedules();
+        } else if (sec === "doctor-records") {
+          if (!AppState.currentDoctorName) {
+            showMessage(
+              "doctorRecordMessage",
+              "Set active doctor first.",
+              "error"
+            );
+            return;
+          }
+          AppState.records.push({
+            id: AppState.records.length + 1,
+            patientEmail: "demo.patient@mail.com",
+            doctorName: AppState.currentDoctorName,
+            diagnosis: "Demo Diagnosis",
+            prescription: "Demo Prescription",
+            notes: "Demo Record",
+            visitDate: todayDateISO(),
+          });
+          showMessage("doctorRecordMessage", "Demo record added.", "success");
+          renderRecords();
+        } else if (sec === "patient-booking") {
+          if (!AppState.currentPatientEmail) {
+            showMessage(
+              "patientBookingMessage",
+              "Set patient identity first.",
+              "error"
+            );
+            return;
+          }
+          AppState.appointments.push({
+            id: AppState.appointments.length + 1,
+            patientName: AppState.currentPatientName,
+            patientEmail: AppState.currentPatientEmail,
+            doctorName: "Dr. Demo Doctor",
+            date: todayDateISO(),
+            time: "10:30 AM",
+            reason: "Demo Booking",
+            status: "Booked",
+          });
+          showMessage(
+            "patientBookingMessage",
+            "Demo booking added.",
+            "success"
+          );
+          renderAppointmentsForAdmin();
+          renderDoctorAppointments();
+          renderPatientAppointments();
+        } else if (sec === "patient-appointments") {
+          renderPatientAppointments();
+          showMessage(
+            "patientAppointmentMessage",
+            "Appointments refreshed.",
+            "success"
+          );
+        } else if (sec === "patient-history") {
+          renderPatientHistory();
+          showMessage(
+            "patientHistoryMessage",
+            "History refreshed.",
+            "success"
+          );
+        }
+
+        updateStats();
+      });
+
+      // ========= ADMIN: USER MANAGEMENT =========
+      const userForm = byId("userForm");
+      const userTableBody = byId("userTableBody");
+      const userSearch = byId("userSearch");
+      const userRoleFilter = byId("userRoleFilter");
+
+      userForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const name = byId("userName").value.trim();
+        const email = byId("userEmail").value.trim();
+        const role = byId("userRole").value;
+        const specialization = byId("userSpecialization").value.trim();
+
+        AppState.users.push({
+          id: AppState.users.length + 1,
+          name,
+          email,
+          role,
+          specialization,
+        });
+
+        userForm.reset();
+        showMessage(
+          "adminUserMessage",
+          "User created successfully.",
+          "success"
+        );
+        renderUsers();
+        updateStats();
+      });
+
+      function renderUsers() {
+        const search = userSearch.value.trim().toLowerCase();
+        const roleF = userRoleFilter.value;
+
+        userTableBody.innerHTML = "";
+
+        AppState.users
+          .filter((u) => {
+            const m1 =
+              !search ||
+              u.name.toLowerCase().includes(search) ||
+              u.email.toLowerCase().includes(search);
+            const m2 = !roleF || u.role === roleF;
+            return m1 && m2;
+          })
+          .forEach((u, idx) => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+              <td>${idx + 1}</td>
+              <td>${u.name}</td>
+              <td>${u.email}</td>
+              <td>${formatRoleBadge(u.role)}</td>
+              <td>${u.specialization || "-"}</td>
+              <td>
+                <button
+                  class="btn btn-danger"
+                  style="padding:3px 8px;font-size:11px"
+                  onclick="deleteUser(${u.id})"
+                >
+                  Delete
+                </button>
+              </td>
+            `;
+            userTableBody.appendChild(tr);
+          });
+      }
+
+      window.deleteUser = function (id) {
+        AppState.users = AppState.users.filter((u) => u.id !== id);
+        showMessage("adminUserMessage", "User deleted.", "success");
+        renderUsers();
+        updateStats();
+      };
+
+      userSearch.addEventListener("input", renderUsers);
+      userRoleFilter.addEventListener("change", renderUsers);
+
+      // ========= ADMIN: APPOINTMENTS =========
+      const adminAppointmentTableBody = byId("adminAppointmentTableBody");
+      const appointmentSearch = byId("appointmentSearch");
+      const appointmentStatusFilter = byId("appointmentStatusFilter");
+
+      function renderAppointmentsForAdmin() {
+        const search = appointmentSearch.value.trim().toLowerCase();
+        const stFilter = appointmentStatusFilter.value;
+
+        adminAppointmentTableBody.innerHTML = "";
+
+        AppState.appointments
+          .filter((a) => {
+            const m1 =
+              !search ||
+              a.patientName.toLowerCase().includes(search) ||
+              a.doctorName.toLowerCase().includes(search);
+            const m2 = !stFilter || a.status === stFilter;
+            return m1 && m2;
+          })
+          .forEach((a) => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+              <td>${a.id}</td>
+              <td>${a.patientName}</td>
+              <td>${a.doctorName}</td>
+              <td>${a.date}</td>
+              <td>${a.time}</td>
+              <td>${a.reason}</td>
+              <td>${formatStatusBadge(a.status)}</td>
+            `;
+            adminAppointmentTableBody.appendChild(tr);
+          });
+      }
+
+      appointmentSearch.addEventListener("input", renderAppointmentsForAdmin);
+      appointmentStatusFilter.addEventListener(
+        "change",
+        renderAppointmentsForAdmin
+      );
+
+      // ========= ADMIN: SETTINGS =========
+      const settingsForm = byId("settingsForm");
+      const settingsTableBody = byId("settingsTableBody");
+
+      settingsForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const key = byId("settingKey").value.trim();
+        const value = byId("settingValue").value.trim();
+
+        AppState.settings.push({
+          id: AppState.settings.length + 1,
+          key,
+          value,
+        });
+
+        settingsForm.reset();
+        showMessage("adminSettingsMessage", "Setting saved.", "success");
+        renderSettings();
+      });
+
+      function renderSettings() {
+        settingsTableBody.innerHTML = "";
+        AppState.settings.forEach((s) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${s.id}</td>
+            <td>${s.key}</td>
+            <td>${s.value}</td>
+          `;
+          settingsTableBody.appendChild(tr);
+        });
+      }
+
+      // ========= DOCTOR: IDENTITY + SCHEDULE =========
+      const doctorIdentityForm = byId("doctorIdentityForm");
+      const scheduleForm = byId("scheduleForm");
+      const scheduleTableBody = byId("scheduleTableBody");
+
+      doctorIdentityForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        AppState.currentDoctorName = byId("doctorName").value.trim();
+        showMessage(
+          "doctorScheduleMessage",
+          "Active doctor set: " + AppState.currentDoctorName,
+          "success"
+        );
+        renderDoctorAppointments();
+        renderSchedules();
+        renderRecords();
+      });
+
+      scheduleForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        if (!AppState.currentDoctorName) {
+          showMessage(
+            "doctorScheduleMessage",
+            "Set active doctor first.",
+            "error"
+          );
+          return;
+        }
+
+        const day = byId("scheduleDay").value.trim();
+        const start = byId("scheduleStart").value.trim();
+        const end = byId("scheduleEnd").value.trim();
+
+        AppState.schedules.push({
+          id: AppState.schedules.length + 1,
+          doctorName: AppState.currentDoctorName,
+          day,
+          start,
+          end,
+        });
+
+        scheduleForm.reset();
+        showMessage("doctorScheduleMessage", "Slot added.", "success");
+        renderSchedules();
+      });
+
+      function renderSchedules() {
+        scheduleTableBody.innerHTML = "";
+        AppState.schedules
+          .filter((s) => {
+            return (
+              !AppState.currentDoctorName ||
+              s.doctorName.toLowerCase() ===
+                AppState.currentDoctorName.toLowerCase()
+            );
+          })
+          .forEach((s, idx) => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+              <td>${idx + 1}</td>
+              <td>${s.doctorName}</td>
+              <td>${s.day}</td>
+              <td>${s.start}</td>
+              <td>${s.end}</td>
+            `;
+            scheduleTableBody.appendChild(tr);
+          });
+      }
+
+      // ========= DOCTOR: APPOINTMENTS =========
+      const doctorAppointmentTableBody = byId("doctorAppointmentTableBody");
+
+      function renderDoctorAppointments() {
+        doctorAppointmentTableBody.innerHTML = "";
+        if (!AppState.currentDoctorName) return;
+
+        AppState.appointments
+          .filter(
+            (a) =>
+              a.doctorName.toLowerCase() ===
+              AppState.currentDoctorName.toLowerCase()
+          )
+          .forEach((a) => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+              <td>${a.id}</td>
+              <td>${a.patientName}</td>
+              <td>${a.patientEmail}</td>
+              <td>${a.date}</td>
+              <td>${a.time}</td>
+              <td>${a.reason}</td>
+              <td>${formatStatusBadge(a.status)}</td>
+            `;
+            doctorAppointmentTableBody.appendChild(tr);
+          });
+      }
+
+      // ========= DOCTOR: RECORDS =========
+      const recordForm = byId("recordForm");
+      const recordTableBody = byId("recordTableBody");
+
+      recordForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        if (!AppState.currentDoctorName) {
+          showMessage(
+            "doctorRecordMessage",
+            "Set active doctor first.",
+            "error"
+          );
+          return;
+        }
+
+        const patientEmail = byId("recordPatientEmail").value.trim();
+        const diagnosis = byId("recordDiagnosis").value.trim();
+        const prescription = byId("recordPrescription").value.trim();
+        const notes = byId("recordNotes").value.trim();
+        const visitDate = byId("recordDate").value;
+
+        AppState.records.push({
+          id: AppState.records.length + 1,
+          patientEmail,
+          doctorName: AppState.currentDoctorName,
+          diagnosis,
+          prescription,
+          notes,
+          visitDate,
+        });
+
+        recordForm.reset();
+        showMessage("doctorRecordMessage", "Record saved.", "success");
+        renderRecords();
+        renderPatientHistory();
+      });
+
+      function renderRecords() {
+        recordTableBody.innerHTML = "";
+        AppState.records
+          .filter(
+            (r) =>
+              !AppState.currentDoctorName ||
+              r.doctorName.toLowerCase() ===
+                AppState.currentDoctorName.toLowerCase()
+          )
+          .forEach((r, idx) => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+              <td>${idx + 1}</td>
+              <td>${r.patientEmail}</td>
+              <td>${r.doctorName}</td>
+              <td>${r.diagnosis}</td>
+              <td>${r.prescription}</td>
+              <td>${r.notes || "-"}</td>
+              <td>${r.visitDate}</td>
+            `;
+            recordTableBody.appendChild(tr);
+          });
+      }
+
+      // ========= PATIENT: IDENTITY & BOOKING =========
+      const patientIdentityForm = byId("patientIdentityForm");
+      const appointmentForm = byId("appointmentForm");
+      const patientAppointmentTableBody = byId("patientAppointmentTableBody");
+
+      patientIdentityForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        AppState.currentPatientName = byId("patientName").value.trim();
+        AppState.currentPatientEmail = byId("patientEmail").value.trim();
+
+        showMessage(
+          "patientBookingMessage",
+          `Patient set: ${AppState.currentPatientName} (${AppState.currentPatientEmail})`,
+          "success"
+        );
+
+        renderPatientAppointments();
+        renderPatientHistory();
+      });
+
+      appointmentForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        if (!AppState.currentPatientEmail) {
+          showMessage(
+            "patientBookingMessage",
+            "Set patient identity first.",
+            "error"
+          );
+          return;
+        }
+
+        const doctorName = byId("appointmentDoctor").value.trim();
+        const date = byId("appointmentDate").value;
+        const time = byId("appointmentTime").value.trim();
+        const reason = byId("appointmentReason").value.trim();
+
+        AppState.appointments.push({
+          id: AppState.appointments.length + 1,
+          patientName: AppState.currentPatientName,
+          patientEmail: AppState.currentPatientEmail,
+          doctorName,
+          date,
+          time,
+          reason,
+          status: "Booked",
+        });
+
+        appointmentForm.reset();
+        showMessage("patientBookingMessage", "Appointment booked.", "success");
+
+        renderAppointmentsForAdmin();
+        renderDoctorAppointments();
+        renderPatientAppointments();
+        updateStats();
+      });
+
+      function renderPatientAppointments() {
+        patientAppointmentTableBody.innerHTML = "";
+        if (!AppState.currentPatientEmail) return;
+
+        AppState.appointments
+          .filter(
+            (a) =>
+              a.patientEmail.toLowerCase() ===
+              AppState.currentPatientEmail.toLowerCase()
+          )
+          .forEach((a) => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+              <td>${a.id}</td>
+              <td>${a.doctorName}</td>
+              <td>${a.date}</td>
+              <td>${a.time}</td>
+              <td>${a.reason}</td>
+              <td>${formatStatusBadge(a.status)}</td>
+            `;
+            patientAppointmentTableBody.appendChild(tr);
+          });
+      }
+
+      // ========= PATIENT: HISTORY =========
+      const patientHistoryTableBody = byId("patientHistoryTableBody");
+
+      function renderPatientHistory() {
+        patientHistoryTableBody.innerHTML = "";
+        if (!AppState.currentPatientEmail) return;
+
+        AppState.records
+          .filter(
+            (r) =>
+              r.patientEmail.toLowerCase() ===
+              AppState.currentPatientEmail.toLowerCase()
+          )
+          .forEach((r, idx) => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+              <td>${idx + 1}</td>
+              <td>${r.doctorName}</td>
+              <td>${r.diagnosis}</td>
+              <td>${r.prescription}</td>
+              <td>${r.notes || "-"}</td>
+              <td>${r.visitDate}</td>
+            `;
+            patientHistoryTableBody.appendChild(tr);
+          });
+      }
+
+      // ========= RENDER ALL =========
+      function renderAll() {
+        renderUsers();
+        renderAppointmentsForAdmin();
+        renderSettings();
+        renderSchedules();
+        renderDoctorAppointments();
+        renderRecords();
+        renderPatientAppointments();
+        renderPatientHistory();
+        updateStats();
+      }
+
+      // INITIAL
+      updateAvatarForRole(AppState.currentRole);
+      updateHeaderForSection(AppState.currentSection);
+      renderAll();
+    </script>
+  </body>
+</html>

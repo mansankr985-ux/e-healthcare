@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Online Healthcare Management System</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Basic Styling -->
+  <style>
+    * { box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; }
+    body { margin: 0; background: #f3f4f6; }
+    header { background: #1f2937; color: #fff; padding: 15px 20px; text-align: center; }
+    header h1 { margin: 0; font-size: 24px; }
+    .container { padding: 20px; max-width: 1200px; margin: 0 auto; }
+    .role-selector { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; justify-content: center; }
+    .btn { padding: 8px 16px; border-radius: 4px; border: none; cursor: pointer; font-size: 14px; }
+    .btn-primary { background: #2563eb; color: white; }
+    .btn-outline { background: white; border: 1px solid #9ca3af; color: #111827; }
+    .btn-danger { background: #dc2626; color: white; }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .card { background: white; padding: 16px; margin-bottom: 20px; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    .card h2 { margin-top: 0; font-size: 18px; border-bottom: 1px solid #e5e7eb; padding-bottom: 8px; margin-bottom: 10px; }
+    form { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px 15px; margin-bottom: 10px; }
+    label { display: block; font-size: 13px; margin-bottom: 3px; color: #374151; }
+    input, select, textarea { width: 100%; padding: 6px 8px; border-radius: 4px; border: 1px solid #d1d5db; font-size: 13px; }
+    textarea { resize: vertical; min-height: 60px; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { padding: 6px 8px; border: 1px solid #e5e7eb; text-align: left; }
+    th { background: #f9fafb; }
+    .hidden { display: none; }
+    .message { margin-bottom: 10px; font-size: 13px; }
+    .message.success { color: #065f46; }
+    .message.error { color: #b91c1c; }
+    .section-title { font-weight: bold; margin: 10px 0 5px; font-size: 14px; }
+    .small-note { font-size: 12px; color: #6b7280; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Online Healthcare Management System</h1>
+  </header>
+
+  <div class="container">
+    <!-- Role Selector -->
+    <div class="card">
+      <h2>Select Role / Login (Demo)</h2>
+      <p class="small-note">
+        This is a simple demo. Choose a role to view its dashboard. No real password / login backend.
+      </p>
+      <div class="role-selector">
+        <button class="btn btn-primary" onclick="showPanel('adminPanel')">Admin Dashboard</button>
+        <button class="btn btn-outline" onclick="showPanel('doctorPanel')">Doctor Dashboard</button>
+        <button class="btn btn-outline" onclick="showPanel('patientPanel')">Patient Dashboard</button>
+      </div>
+    </div>
+
+    <!-- Admin Panel -->
+    <div id="adminPanel" class="card hidden">
+      <h2>Admin Dashboard</h2>
+      <div id="adminMessage" class="message"></div>
+
+      <!-- User Management -->
+      <div class="section-title">1. User Management</div>
+      <form id="userForm">
+        <div>
+          <label for="userName">Name</label>
+          <input id="userName" required>
+        </div>
+        <div>
+          <label for="userEmail">Email</label>
+          <input id="userEmail" type="email" required>
+        </div>
+        <div>
+          <label for="userRole">Role</label>
+          <select id="userRole" required>
+            <option value="Admin">Admin</option>
+            <option value="Doctor">Doctor</option>
+            <option value="Patient">Patient</option>
+          </select>
+        </div>
+        <div>
+          <label for="userSpecialization">Specialization (for Doctors)</label>
+          <input id="userSpecialization" placeholder="e.g. Cardiologist">
+        </div>
+        <div>
+          <label>&nbsp;</label>
+          <button type="submit" class="btn btn-primary">Add User</button>
+        </div>
+      </form>
+
+      <table id="userTable">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Specialization</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Filled by JS -->
+        </tbody>
+      </table>
+
+      <!-- Appointment Management -->
+      <div class="section-title" style="margin-top: 20px;">2. Appointment Management (View All)</div>
+      <table id="adminAppointmentTable">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Patient</th>
+            <th>Patient Email</th>
+            <th>Doctor</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Reason</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Filled by JS -->
+        </tbody>
+      </table>
+
+      <!-- System Settings -->
+      <div class="section-title" style="margin-top: 20px;">3. System Settings</div>
+      <form id="settingsForm">
+        <div>
+          <label for="settingKey">Setting Key</label>
+          <input id="settingKey" placeholder="e.g. clinic_hours" required>
+        </div>
+        <div>
+          <label for="settingValue">Setting Value</label>
+          <input id="settingValue" placeholder="e.g. 9 AM - 6 PM" required>
+        </div>
+        <div>
+          <label>&nbsp;</label>
+          <button type="submit" class="btn btn-primary">Save Setting</button>
+        </div>
+      </form>
+
+      <table id="settingsTable">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Key</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Filled by JS -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Doctor Panel -->
+    <div id="doctorPanel" class="card hidden">
+      <h2>Doctor Dashboard</h2>
+      <div id="doctorMessage" class="message"></div>
+
+      <!-- Simple doctor identity -->
+      <div class="section-title">Doctor Identity (for Demo)</div>
+      <form id="doctorIdentityForm">
+        <div>
+          <label for="doctorName">Doctor Name</label>
+          <input id="doctorName" placeholder="Name must match appointment doctor name" required>
+        </div>
+        <div>
+          <label>&nbsp;</label>
+          <button type="submit" class="btn btn-primary">Load My Data</button>
+        </div>
+      </form>
+
+      <!-- Schedule & Appointments -->
+      <div class="section-title">1. My Appointments</div>
+      <table id="doctorAppointmentsTable">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Patient</th>
+            <th>Patient Email</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Reason</th>
+            <th>Status</th>
+            <th>Notes / Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Filled by JS -->
+        </tbody>
+      </table>
+
+      <div class="section-title" style="margin-top: 20px;">2. Update Appointment</div>
+      <form id="doctorUpdateForm">
+        <div>
+          <label for="updateApptId">Appointment ID</label>
+          <input id="updateApptId" readonly>
+        </div>
+        <div>
+          <label for="updateStatus">Status</label>
+          <select id="updateStatus">
+            <option>Scheduled</option>
+            <option>Completed</option>
+            <option>Cancelled</option>
+          </select>
+        </div>
+        <div>
+          <label for="updateNotes">Notes / Prescription</label>
+          <textarea id="updateNotes" placeholder="Add notes or prescription details..."></textarea>
+        </div>
+        <div>
+          <label>&nbsp;</label>
+          <button class="btn btn-primary" type="submit">Save Update</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Patient Panel -->
+    <div id="patientPanel" class="card hidden">
+      <h2>Patient Dashboard</h2>
+      <div id="patientMessage" class="message"></div>
+
+      <!-- Quick Patient Identity -->
+      <div class="section-title">Identify / Load Patient</div>
+      <form id="patientIdentityForm">
+        <div>
+          <label for="patientEmail">Email</label>
+          <input id="patientEmail" type="email" placeholder="Enter your email to load appointments" required>
+        </div>
+        <div>
+          <label>&nbsp;</label>
+          <button class="btn btn-primary">Load My Appointments</button>
+        </div>
+      </form>
+
+      <!-- Book Appointment -->
+      <div class="section-title">1. Book an Appointment</div>
+      <form id="bookingForm">
+        <div>
+          <label for="bookingPatientName">Your Name</label>
+          <input id="bookingPatientName" required>
+        </div>
+        <div>
+          <label for="bookingPatientEmail">Email</label>
+          <input id="bookingPatientEmail" type="email" required>
+        </div>
+        <div>
+          <label for="bookingDoctor">Choose Doctor</label>
+          <select id="bookingDoctor" required>
+            <!-- Populated by JS -->
+          </select>
+        </div>
+        <div>
+          <label for="bookingDate">Date</label>
+          <input id="bookingDate" type="date" required>
+        </div>
+        <div>
+          <label for="bookingTime">Time</label>
+          <input id="bookingTime" type="time" required>
+        </div>
+        <div>
+          <label for="bookingReason">Reason</label>
+          <textarea id="bookingReason" required></textarea>
+        </div>
+        <div>
+          <label>&nbsp;</label>
+          <button class="btn btn-primary" type="submit">Book Appointment</button>
+        </div>
+      </form>
+
+      <!-- My Appointments Table -->
+      <div class="section-title">2. My Appointments</div>
+      <table id="patientAppointmentsTable">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Doctor</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Reason</th>
+            <th>Status</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Filled by JS -->
+        </tbody>
+      </table>
+    </div>
+
+  </div> <!-- /.container -->
+
+  <script>
+    // API-backed data (fallback to in-memory if server unreachable)
+    const API_BASE = 'http://localhost:3000/api';
+
+    let users = [];
+    let appointments = [];
+    let settings = [];
+
+    // Fallback sample data (used only if server is down)
+    const fallbackUsers = [
+      { id: 1, name: 'Admin User', email: 'admin@example.com', role: 'Admin', specialization: '' },
+      { id: 2, name: 'Dr. Alice', email: 'alice@clinic.com', role: 'Doctor', specialization: 'Cardiology' },
+      { id: 3, name: 'Dr. Bob', email: 'bob@clinic.com', role: 'Doctor', specialization: 'Dermatology' },
+      { id: 4, name: 'John Patient', email: 'john@patient.com', role: 'Patient', specialization: '' }
+    ];
+
+    const fallbackAppointments = [
+      { id: 1, patient: 'John Patient', patientEmail: 'john@patient.com', doctor: 'Dr. Alice', date: '2026-01-10', time: '10:00', reason: 'Chest pain', status: 'Scheduled', notes: '' },
+      { id: 2, patient: 'Jane Doe', patientEmail: 'jane@patient.com', doctor: 'Dr. Bob', date: '2026-01-12', time: '15:00', reason: 'Skin rash', status: 'Scheduled', notes: '' }
+    ];
+
+    let nextApptId = 1; // updated after load
+
+    // Helpers
+    function qs(id) { return document.getElementById(id); }
+
+    function showPanel(panelId) {
+      ['adminPanel','doctorPanel','patientPanel'].forEach(pid => {
+        const el = qs(pid);
+        if (el) el.classList.toggle('hidden', pid !== panelId);
+      });
+      clearMessages();
+      refreshDynamicLists();
+    }
+
+    function clearMessages() {
+      ['adminMessage','doctorMessage','patientMessage'].forEach(id => { const el = qs(id); if (el) { el.textContent = ''; el.className = 'message'; } });
+    }
+
+    // Fetch helpers
+    async function apiGet(path) {
+      const res = await fetch(`${API_BASE}${path}`);
+      if (!res.ok) throw new Error('Server error');
+      return res.json();
+    }
+    async function apiPost(path, body) {
+      const res = await fetch(`${API_BASE}${path}`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) });
+      if (!res.ok) throw new Error('Server error');
+      return res.json();
+    }
+    async function apiDelete(path) {
+      const res = await fetch(`${API_BASE}${path}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error('Server error');
+      return res.json();
+    }
+    async function apiPut(path, body) {
+      const res = await fetch(`${API_BASE}${path}`, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) });
+      if (!res.ok) throw new Error('Server error');
+      return res.json();
+    }
+
+    // Populate UI
+    function populateUserTable() {
+      const tbody = qs('userTable').querySelector('tbody');
+      tbody.innerHTML = '';
+      users.forEach((u, i) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${i+1}</td><td>${u.name}</td><td>${u.email}</td><td>${u.role}</td><td>${u.specialization||'-'}</td><td><button class="btn btn-danger" onclick="removeUser(${u.id})">Remove</button></td>`;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function populateAdminAppointments() {
+      const tbody = qs('adminAppointmentTable').querySelector('tbody');
+      tbody.innerHTML = '';
+      appointments.forEach(a => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${a.id}</td><td>${a.patient}</td><td>${a.patientEmail}</td><td>${a.doctor}</td><td>${a.date}</td><td>${a.time}</td><td>${a.reason}</td><td>${a.status}</td>`;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function populateSettingsTable() {
+      const tbody = qs('settingsTable').querySelector('tbody');
+      tbody.innerHTML = '';
+      settings.forEach((s,i) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${i+1}</td><td>${s.key}</td><td>${s.value}</td>`;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function populateDoctorAppointments(doctorName) {
+      const tbody = qs('doctorAppointmentsTable').querySelector('tbody');
+      tbody.innerHTML = '';
+      appointments.filter(a => a.doctor === doctorName).forEach(a => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${a.id}</td><td>${a.patient}</td><td>${a.patientEmail}</td><td>${a.date}</td><td>${a.time}</td><td>${a.reason}</td><td>${a.status}</td><td><button class='btn btn-outline' onclick="startEditAppt(${a.id})">Edit</button></td>`;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function startEditAppt(id) {
+      const appt = appointments.find(a => a.id === id);
+      if (!appt) return;
+      qs('updateApptId').value = appt.id;
+      qs('updateStatus').value = appt.status;
+      qs('updateNotes').value = appt.notes || '';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      qs('doctorMessage').textContent = `Editing appointment ${id}`;
+      qs('doctorMessage').className = 'message success';
+    }
+
+    function populatePatientAppointments(email) {
+      const tbody = qs('patientAppointmentsTable').querySelector('tbody');
+      tbody.innerHTML = '';
+      const myAppts = appointments.filter(a => a.patientEmail.toLowerCase() === email.toLowerCase());
+      myAppts.forEach(a => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${a.id}</td><td>${a.doctor}</td><td>${a.date}</td><td>${a.time}</td><td>${a.reason}</td><td>${a.status}</td><td>${a.notes||'-'}</td>`;
+        tbody.appendChild(tr);
+      });
+      if (!myAppts.length) {
+        qs('patientMessage').textContent = 'No appointments found for that email.';
+        qs('patientMessage').className = 'message small-note';
+      } else {
+        qs('patientMessage').textContent = '';
+      }
+    }
+
+    function refreshDynamicLists() {
+      const doctorSelect = qs('bookingDoctor');
+      if (!doctorSelect) return;
+      doctorSelect.innerHTML = '';
+      users.filter(u => u.role === 'Doctor').forEach(d => {
+        const opt = document.createElement('option'); opt.value = d.name; opt.textContent = `${d.name} (${d.specialization||'General'})`; doctorSelect.appendChild(opt);
+      });
+    }
+
+    // Server interactions & UI bindings
+    async function loadData() {
+      try {
+        [users, appointments, settings] = await Promise.all([
+          apiGet('/users'),
+          apiGet('/appointments'),
+          apiGet('/settings')
+        ]);
+        // compute nextApptId
+        nextApptId = appointments.length ? Math.max(...appointments.map(a => a.id)) + 1 : 1;
+        populateUserTable(); populateAdminAppointments(); populateSettingsTable(); refreshDynamicLists();
+        qs('adminMessage').textContent = 'Data loaded from server.'; qs('adminMessage').className = 'message success';
+      } catch (err) {
+        // fallback
+        qs('adminMessage').textContent = 'Server unreachable — using fallback sample data.'; qs('adminMessage').className = 'message error';
+        users = fallbackUsers.slice(); appointments = fallbackAppointments.slice(); settings = [];
+        nextApptId = appointments.length ? Math.max(...appointments.map(a => a.id)) + 1 : 1;
+        populateUserTable(); populateAdminAppointments(); populateSettingsTable(); refreshDynamicLists();
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadData();
+
+      // Admin - Add User
+      qs('userForm').addEventListener('submit', async e => {
+        e.preventDefault();
+        const name = qs('userName').value.trim();
+        const email = qs('userEmail').value.trim();
+        const role = qs('userRole').value;
+        const spec = qs('userSpecialization').value.trim();
+        if (!name || !email) { qs('adminMessage').textContent = 'Name and Email are required.'; qs('adminMessage').className = 'message error'; return; }
+        try {
+          const user = await apiPost('/users', { name, email, role, specialization: spec });
+          users.push(user);
+          qs('userForm').reset();
+          qs('adminMessage').textContent = 'User added.'; qs('adminMessage').className = 'message success';
+          populateUserTable(); refreshDynamicLists();
+        } catch (err) { qs('adminMessage').textContent = 'Failed to add user (server).'; qs('adminMessage').className = 'message error'; }
+      });
+
+      // Admin - Settings
+      qs('settingsForm').addEventListener('submit', async e => {
+        e.preventDefault();
+        const key = qs('settingKey').value.trim();
+        const value = qs('settingValue').value.trim();
+        if (!key) { qs('adminMessage').textContent = 'Setting key required.'; qs('adminMessage').className = 'message error'; return; }
+        try {
+          const s = await apiPost('/settings', { key, value });
+          settings.push(s);
+          qs('settingsForm').reset();
+          qs('adminMessage').textContent = 'Setting saved.'; qs('adminMessage').className = 'message success';
+          populateSettingsTable();
+        } catch (err) { qs('adminMessage').textContent = 'Failed to save setting.'; qs('adminMessage').className = 'message error'; }
+      });
+
+      // Doctor - load identity
+      qs('doctorIdentityForm').addEventListener('submit', e => {
+        e.preventDefault();
+        const name = qs('doctorName').value.trim();
+        if (!name) { qs('doctorMessage').textContent = 'Enter your name to load data.'; qs('doctorMessage').className = 'message error'; return; }
+        const isDoc = users.some(u => u.name === name && u.role === 'Doctor');
+        if (!isDoc) { qs('doctorMessage').textContent = 'Doctor not found. Ensure name matches a doctor user.'; qs('doctorMessage').className = 'message error'; return; }
+        qs('doctorMessage').textContent = `Welcome, ${name}`; qs('doctorMessage').className = 'message success';
+        populateDoctorAppointments(name);
+      });
+
+      // Doctor - update appointment
+      qs('doctorUpdateForm').addEventListener('submit', async e => {
+        e.preventDefault();
+        const id = parseInt(qs('updateApptId').value);
+        const status = qs('updateStatus').value;
+        const notes = qs('updateNotes').value.trim();
+        try {
+          const updated = await apiPut(`/appointments/${id}`, { status, notes });
+          // update local array
+          const idx = appointments.findIndex(a=>a.id===updated.id);
+          if (idx>=0) appointments[idx] = updated;
+          qs('doctorMessage').textContent = 'Appointment updated.'; qs('doctorMessage').className = 'message success';
+          const loadedName = qs('doctorName').value.trim(); if (loadedName) populateDoctorAppointments(loadedName);
+          populateAdminAppointments(); populatePatientAppointments(updated.patientEmail);
+        } catch (err) { qs('doctorMessage').textContent = 'Failed to update appointment.'; qs('doctorMessage').className = 'message error'; }
+      });
+
+      // Patient - load
+      qs('patientIdentityForm').addEventListener('submit', e => {
+        e.preventDefault();
+        const email = qs('patientEmail').value.trim();
+        populatePatientAppointments(email);
+      });
+
+      // Booking submit
+      qs('bookingForm').addEventListener('submit', async e => {
+        e.preventDefault();
+        const name = qs('bookingPatientName').value.trim();
+        const email = qs('bookingPatientEmail').value.trim();
+        const doctor = qs('bookingDoctor').value;
+        const date = qs('bookingDate').value;
+        const time = qs('bookingTime').value;
+        const reason = qs('bookingReason').value.trim();
+        if (!name || !email || !doctor || !date || !time) { qs('patientMessage').textContent = 'Please fill all required fields.'; qs('patientMessage').className = 'message error'; return; }
+        try {
+          const newAppt = await apiPost('/appointments', { patient: name, patientEmail: email, doctor, date, time, reason });
+          appointments.push(newAppt);
+          qs('patientMessage').textContent = 'Appointment booked.'; qs('patientMessage').className = 'message success';
+          qs('bookingForm').reset();
+          populateAdminAppointments();
+          populatePatientAppointments(email);
+        } catch (err) { qs('patientMessage').textContent = 'Failed to book appointment.'; qs('patientMessage').className = 'message error'; }
+      });
+
+    });
+
+    // Actions that need to be global for inline handlers
+    window.showPanel = showPanel;
+    window.removeUser = async function(id) {
+      if (!confirm('Remove this user?')) return;
+      try {
+        await apiDelete(`/users/${id}`);
+        users = users.filter(u=>u.id!==id);
+        populateUserTable();
+        refreshDynamicLists();
+      } catch (err) { qs('adminMessage').textContent = 'Failed to remove user.'; qs('adminMessage').className = 'message error'; }
+    };
+
+    window.startEditAppt = startEditAppt;
+
+  </script>
+</body>
+</html>
